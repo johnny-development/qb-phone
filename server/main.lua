@@ -161,6 +161,16 @@ end
 exports('sendNewMailToOffline', sendNewMailToOffline)
 -- Callbacks
 
+QBCore.Functions.CreateCallback('qb-phone:server:HasPhone', function(source, cb)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if Player then
+        local HasPhone = Player.Functions.GetItemByName('phone')
+        cb(HasPhone ~= nil)
+    else
+        cb(false)
+    end
+end)
+
 QBCore.Functions.CreateCallback("qb-phone:server:GetInvoices", function(source, cb)
     local Player = QBCore.Functions.GetPlayer(source)
 
@@ -979,6 +989,11 @@ RegisterNetEvent('qb-phone:server:AddRecentCall', function(type, data)
     end
 end)
 
+RegisterNetEvent('qb-phone:server:TakeScreenshot', function()
+    local src = source
+    UploadScreenshotWithPlayerName(src)
+end)
+
 RegisterNetEvent('qb-phone:server:CancelCall', function(ContactData)
     local Ply = QBCore.Functions.GetPlayerByPhone(ContactData.TargetData.number)
     if Ply ~= nil then
@@ -1075,6 +1090,10 @@ RegisterNetEvent('qb-phone:server:sendPing', function(data)
 end)
 
 -- Command
+
+QBCore.Commands.Add('takescreenshot', 'Take a screenshot and upload it', {}, false, function(source, args)
+    UploadScreenshotWithPlayerName(source)
+end, 'admin')
 
 QBCore.Commands.Add('setmetadata', 'Set Player Metadata (God Only)', {}, false, function(source, args)
     local Player = QBCore.Functions.GetPlayer(source)
